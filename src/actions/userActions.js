@@ -3,6 +3,8 @@ import axios from 'axios';
 import * as userConstants from '../constants/userConstants';
 import { actionError } from '../utils/generalUtils';
 
+const backendDomain = process.env.REACT_APP_BACKEND_DOMAIN;
+
 export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: userConstants.USER_LOGIN_REQUEST });
@@ -14,12 +16,13 @@ export const login = (email, password) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      '/api/v1/users/login',
+      `${backendDomain}/api/v1/users/login`,
       { email, password },
       config
     );
 
     const { data: user } = data;
+
     dispatch({ type: userConstants.USER_LOGIN_SUCCESS, payload: user });
 
     localStorage.setItem('userInfo', JSON.stringify(user));
@@ -43,7 +46,11 @@ export const register = (formData) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post('/api/v1/users', formData, config);
+    const { data } = await axios.post(
+      `${backendDomain}/api/v1/users`,
+      formData,
+      config
+    );
 
     const { data: user } = data;
     dispatch({ type: userConstants.USER_REGISTER_SUCCESS, payload: user });
@@ -66,7 +73,11 @@ export const forgotPassword = (email) => async (dispatch) => {
       },
     };
 
-    await axios.post(`/api/v1/users/forgot-password`, { email }, config);
+    await axios.post(
+      `${backendDomain}/api/v1/users/forgot-password`,
+      { email },
+      config
+    );
 
     dispatch({ type: userConstants.FORGOT_PASSORD_SUCCESS });
   } catch (error) {
@@ -85,7 +96,7 @@ export const resetPassword = (formData, token) => async (dispatch) => {
     };
 
     await axios.patch(
-      `/api/v1/users/reset-password/${token}`,
+      `${backendDomain}/api/v1/users/reset-password/${token}`,
       formData,
       config
     );
